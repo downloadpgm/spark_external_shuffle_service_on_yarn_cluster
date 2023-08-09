@@ -136,7 +136,7 @@ $ docker container exec -it <spk_cli ID> bash
 2. edit spark-env.sh and add lines below
 ```shell
 $ cd $SPARK_HOME/conf
-$ vi spark-env.sh
+$ vi spark-defaults.conf
 
 spark.shuffle.service.enabled true
 spark.dynamicAllocation.enabled true
