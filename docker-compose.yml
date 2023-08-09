@@ -1,0 +1,49 @@
+version: "3.1"
+
+services:
+  hdpmst:
+    image: mkenjis/ubhdpclu_vol_img
+    ports:
+      - 8088:8088
+    volumes:
+      - .:/root/staging
+      - name0:/hadoop/hdfs/namenode
+    networks:
+      - mynet
+    environment:
+      - HADOOP_MULTINODE=yes
+  hdp1:
+    image: mkenjis/ubhdpclu_vol_img
+    volumes:
+      - data1:/hadoop/hdfs/datanode
+    networks:
+      - mynet
+    environment:
+      - HADOOP_MASTER=hdpmst
+  hdp2:
+    image: mkenjis/ubhdpclu_vol_img
+    volumes:
+      - data2:/hadoop/hdfs/datanode
+    networks:
+      - mynet
+    environment:
+      - HADOOP_MASTER=hdpmst
+  spk_cli:
+    image: mkenjis/ubspkcli_yarn_img
+    ports:
+      - 4040:4040
+      - 8080:8080
+    networks:
+      - mynet
+    environment:
+      - HADOOP_HOST_MASTER=hdpmst
+
+networks:
+  mynet:
+    external:
+       name: mynet
+
+volumes:
+  name0:
+  data1:
+  data2:
