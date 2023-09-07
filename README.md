@@ -77,12 +77,12 @@ $ find . -name '*yarn*jar'
 
 3. copy the jar file to Hadoop YARN master and slaves
 ```shell
-$ scp ./yarn/spark-2.3.2-yarn-shuffle.jar root@hdpmst:/usr/local/hadoop-2.7.3/share/hadoop/mapreduce
+$ scp ./yarn/spark-2.3.2-yarn-shuffle.jar root@hdpmst:/usr/local/hadoop-2.7.3/share/hadoop/yarn
 spark-2.3.2-yarn-shuffle.jar                          100% 9476KB  52.3MB/s   00:00
-$ scp ./yarn/spark-2.3.2-yarn-shuffle.jar root@hdp1:/usr/local/hadoop-2.7.3/share/hadoop/mapreduce
+$ scp ./yarn/spark-2.3.2-yarn-shuffle.jar root@hdp1:/usr/local/hadoop-2.7.3/share/hadoop/yarn
 Warning: Permanently added 'hdp1,172.18.0.3' (ECDSA) to the list of known hosts.
 spark-2.3.2-yarn-shuffle.jar                          100% 9476KB  59.1MB/s   00:00
-$ scp ./yarn/spark-2.3.2-yarn-shuffle.jar root@hdp2:/usr/local/hadoop-2.7.3/share/hadoop/mapreduce
+$ scp ./yarn/spark-2.3.2-yarn-shuffle.jar root@hdp2:/usr/local/hadoop-2.7.3/share/hadoop/yarn
 Warning: Permanently added 'hdp2,172.18.0.4' (ECDSA) to the list of known hosts.
 spark-2.3.2-yarn-shuffle.jar                          100% 9476KB  49.9MB/s   00:00
 ```
@@ -106,14 +106,22 @@ $ vi yarn-site.xml
 
   <property>
     <name>yarn.nodemanager.aux-services</name>
-    <value>spark_shuffle</value>
+    <value>mapreduce_shuffle,spark_shuffle</value>
   </property>
   <property>
     <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+    <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.aux-services.spark_shuffle.class</name>
     <value>org.apache.spark.network.yarn.YarnShuffleService</value>
   </property>
 
-$ scp yarn-site.xml root@spkcli:/usr/local/spark-2.3.2-bin-hadoop2.7/conf
+
+$ scp yarn-site.xml root@spk_cli:/usr/local/spark-2.3.2-bin-hadoop2.7/conf
+$ scp yarn-site.xml root@hdp1:/usr/local/hadoop-2.7.3/etc/hadoop
+$ scp yarn-site.xml root@hdp2:/usr/local/hadoop-2.7.3/etc/hadoop
+$ scp yarn-site.xml root@hdp3:/usr/local/hadoop-2.7.3/etc/hadoop
 ```
 
 6. start YARN resource manager and node managers
@@ -140,10 +148,11 @@ $ vi spark-defaults.conf
 
 spark.shuffle.service.enabled true
 spark.dynamicAllocation.enabled true
-spark.dynamicAllocation.minExecutors 2
-spark.dynamicAllocation.schedulerBacklogTimeout 1m
+spark.dynamicAllocation.initialExecutors 1
+spark.dynamicAllocation.minExecutors 1
 spark.dynamicAllocation.maxExecutors 20
-spark.dynamicAllocation.executorIdleTimeout 2min
+spark.dynamicAllocation.schedulerBacklogTimeout 1m
+spark.dynamicAllocation.executorIdleTimeout 2m
 
 ```
 

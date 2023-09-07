@@ -28,6 +28,14 @@ services:
       - mynet
     environment:
       - HADOOP_MASTER=hdpmst
+  hdp3:
+    image: mkenjis/ubhdpclu_vol_img
+    volumes:
+      - data3:/hadoop/hdfs/datanode
+    networks:
+      - mynet
+    environment:
+      - HADOOP_MASTER=hdpmst
   spk_cli:
     image: mkenjis/ubspkcli_yarn_img
     ports:
@@ -47,3 +55,4 @@ volumes:
   name0:
   data1:
   data2:
+  data3:
