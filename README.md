@@ -32,22 +32,16 @@ docker node update --label-add hostlabel=hdp3 node4
 docker network create --driver overlay mynet
 ```
 
-5. start the Hadoop cluster (with HDFS and YARN)
+5. start the Hadoop cluster (with HDFS and YARN) and spark client
 ```shell
-$ docker stack deploy -c docker-compose-hdp.yml hdp
-$ docker stack ps hdp
-jeti90luyqrb   hdp_hdp1.1     mkenjis/ubhdpclu_vol_img:latest   node2     Running         Preparing 39 seconds ago             
-tosjcz96hnj9   hdp_hdp2.1     mkenjis/ubhdpclu_vol_img:latest   node3     Running         Preparing 38 seconds ago             
-t2ooig7fbt9y   hdp_hdp3.1     mkenjis/ubhdpclu_vol_img:latest   node4     Running         Preparing 39 seconds ago             
-wym7psnwca4n   hdp_hdpmst.1   mkenjis/ubhdpclu_vol_img:latest   node1     Running         Preparing 39 seconds ago
-```
-
-4. start spark client
-```shell
-$ docker stack deploy -c docker-compose.yml spk
-$ docker service ls
-ID             NAME          MODE         REPLICAS   IMAGE                                 PORTS
-xf8qop5183mj   spk_spk_cli   replicated   0/1        mkenjis/ubspkcli_yarn_img:latest
+$ docker stack deploy -c docker-compose.yml hdp
+$ docker stack ps spk
+ID             NAME            IMAGE                              NODE      DESIRED STATE   CURRENT STATE           ERROR     PORTS
+vammehpu2iz4   spk_hdp1.1      mkenjis/ubhdpclu_vol_img:latest    node2     Running         Running 3 minutes ago             
+xvasm5pexn3d   spk_hdp2.1      mkenjis/ubhdpclu_vol_img:latest    node3     Running         Running 3 minutes ago             
+iqly7vcoz8c8   spk_hdp3.1      mkenjis/ubhdpclu_vol_img:latest    node4     Running         Running 3 minutes ago             
+mdep15vxvrav   spk_hdpmst.1    mkenjis/ubhdpclu_vol_img:latest    node1     Running         Running 3 minutes ago             
+vh1i5d3g4ipb   spk_spk_cli.1   mkenjis/ubspkcli_yarn_img:latest   node1     Running         Running 3 minutes ago
 ```
 
 ## Set up YARN with Spark Shuffle
@@ -55,9 +49,9 @@ xf8qop5183mj   spk_spk_cli   replicated   0/1        mkenjis/ubspkcli_yarn_img:l
 1. access spark client node
 ```shell
 $ docker container ls   # run it in each node and check which <container ID> is running the Spark client constainer
-CONTAINER ID   IMAGE                                 COMMAND                  CREATED         STATUS         PORTS                                          NAMES
-8f0eeca49d0f   mkenjis/ubspkcli_yarn_img:latest   "/usr/bin/supervisord"   3 minutes ago   Up 3 minutes   4040/tcp, 7077/tcp, 8080-8082/tcp, 10000/tcp   yarn_spk_cli.1.npllgerwuixwnb9odb3z97tuh
-e9ceb97de97a   mkenjis/ubhdpclu_vol_img:latest           "/usr/bin/supervisord"   4 minutes ago   Up 4 minutes   9000/tcp                                       yarn_hdp1.1.58koqncyw79aaqhirapg502os
+CONTAINER ID   IMAGE                              COMMAND                  CREATED         STATUS         PORTS                                          NAMES
+14fd74b56206   mkenjis/ubhdpclu_vol_img:latest    "/usr/bin/supervisord"   5 minutes ago   Up 5 minutes   9000/tcp                                       spk_hdpmst.1.mdep15vxvravufv6snivq0519
+d6896e6d5856   mkenjis/ubspkcli_yarn_img:latest   "/usr/bin/supervisord"   5 minutes ago   Up 5 minutes   4040/tcp, 7077/tcp, 8080-8082/tcp, 10000/tcp   spk_spk_cli.1.vh1i5d3g4ipbn7loohxc19ywe
 
 $ docker container exec -it <spk_cli ID> bash
 ```
@@ -78,13 +72,16 @@ $ find . -name '*yarn*jar'
 3. copy the jar file to Hadoop YARN master and slaves
 ```shell
 $ scp ./yarn/spark-2.3.2-yarn-shuffle.jar root@hdpmst:/usr/local/hadoop-2.7.3/share/hadoop/yarn
-spark-2.3.2-yarn-shuffle.jar                          100% 9476KB  52.3MB/s   00:00
+spark-2.3.2-yarn-shuffle.jar                                             100% 9476KB   2.3MB/s   00:04    
 $ scp ./yarn/spark-2.3.2-yarn-shuffle.jar root@hdp1:/usr/local/hadoop-2.7.3/share/hadoop/yarn
-Warning: Permanently added 'hdp1,172.18.0.3' (ECDSA) to the list of known hosts.
-spark-2.3.2-yarn-shuffle.jar                          100% 9476KB  59.1MB/s   00:00
+Warning: Permanently added 'hdp1,10.0.1.5' (ECDSA) to the list of known hosts.
+spark-2.3.2-yarn-shuffle.jar                                             100% 9476KB   2.0MB/s   00:04    
 $ scp ./yarn/spark-2.3.2-yarn-shuffle.jar root@hdp2:/usr/local/hadoop-2.7.3/share/hadoop/yarn
-Warning: Permanently added 'hdp2,172.18.0.4' (ECDSA) to the list of known hosts.
-spark-2.3.2-yarn-shuffle.jar                          100% 9476KB  49.9MB/s   00:00
+Warning: Permanently added 'hdp2,10.0.1.8' (ECDSA) to the list of known hosts.
+spark-2.3.2-yarn-shuffle.jar                                             100% 9476KB   6.1MB/s   00:01    
+$ scp ./yarn/spark-2.3.2-yarn-shuffle.jar root@hdp3:/usr/local/hadoop-2.7.3/share/hadoop/yarn
+Warning: Permanently added 'hdp3,10.0.1.11' (ECDSA) to the list of known hosts.
+spark-2.3.2-yarn-shuffle.jar                                             100% 9476KB   1.9MB/s   00:04
 ```
 
 4. stop YARN resource manager and node managers
@@ -148,8 +145,8 @@ $ vi spark-defaults.conf
 
 spark.shuffle.service.enabled true
 spark.dynamicAllocation.enabled true
-spark.dynamicAllocation.initialExecutors 1
-spark.dynamicAllocation.minExecutors 1
+spark.dynamicAllocation.initialExecutors 2
+spark.dynamicAllocation.minExecutors 2
 spark.dynamicAllocation.maxExecutors 20
 spark.dynamicAllocation.schedulerBacklogTimeout 1m
 spark.dynamicAllocation.executorIdleTimeout 2m
