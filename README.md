@@ -145,11 +145,11 @@ $ vi spark-defaults.conf
 
 spark.shuffle.service.enabled true
 spark.dynamicAllocation.enabled true
-spark.dynamicAllocation.initialExecutors 2
+spark.dynamicAllocation.initialExecutors 4
 spark.dynamicAllocation.minExecutors 2
 spark.dynamicAllocation.maxExecutors 20
 spark.dynamicAllocation.schedulerBacklogTimeout 1m
-spark.dynamicAllocation.executorIdleTimeout 2m
+spark.dynamicAllocation.executorIdleTimeout 1m
 
 ```
 

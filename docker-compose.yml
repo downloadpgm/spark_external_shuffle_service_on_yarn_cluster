@@ -40,7 +40,6 @@ services:
     image: mkenjis/ubspkcli_yarn_img
     ports:
       - 4040:4040
-      - 8080:8080
     networks:
       - mynet
     environment:
