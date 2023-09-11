@@ -86,7 +86,7 @@ spark-2.3.2-yarn-shuffle.jar                                             100% 94
 
 4. stop YARN resource manager and node managers
 
-In hdp1 and hdp2, run :
+In hdp1,hdp2,hdp3 run :
 ```shell
 $ yarn-daemon.sh stop nodemanager
 ```
