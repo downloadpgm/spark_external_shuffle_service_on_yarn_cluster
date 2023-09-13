@@ -3,6 +3,10 @@ version: "3.1"
 services:
   hdpmst:
     image: mkenjis/ubhdpclu_vol_img
+    deploy:
+      placement:
+        constraints:
+          - node.labels.hostlabel == hdpmst
     ports:
       - 8088:8088
     volumes:
@@ -14,6 +18,10 @@ services:
       - HADOOP_MULTINODE=yes
   hdp1:
     image: mkenjis/ubhdpclu_vol_img
+    deploy:
+      placement:
+        constraints:
+          - node.labels.hostlabel == hdp1
     volumes:
       - data1:/hadoop/hdfs/datanode
     networks:
@@ -22,6 +30,10 @@ services:
       - HADOOP_MASTER=hdpmst
   hdp2:
     image: mkenjis/ubhdpclu_vol_img
+    deploy:
+      placement:
+        constraints:
+          - node.labels.hostlabel == hdp2
     volumes:
       - data2:/hadoop/hdfs/datanode
     networks:
@@ -30,6 +42,10 @@ services:
       - HADOOP_MASTER=hdpmst
   hdp3:
     image: mkenjis/ubhdpclu_vol_img
+    deploy:
+      placement:
+        constraints:
+          - node.labels.hostlabel == hdp3
     volumes:
       - data3:/hadoop/hdfs/datanode
     networks:
@@ -38,6 +54,10 @@ services:
       - HADOOP_MASTER=hdpmst
   spk_cli:
     image: mkenjis/ubspkcli_yarn_img
+    deploy:
+      placement:
+        constraints:
+          - node.labels.hostlabel == hdpmst
     ports:
       - 4040:4040
     networks:

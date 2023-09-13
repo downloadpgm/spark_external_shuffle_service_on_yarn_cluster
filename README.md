@@ -96,7 +96,7 @@ In hdpmst, run :
 $ stop-yarn.sh
 ```
 
-5. edit yarn-site.xml in hdpmst and copy to spkcli :
+5. edit yarn-site.xml in hdpmst and copy to spkcli and yarn nodes :
 ```shell
 $ cd $HADOOP_HOME/etc/hadoop
 $ vi yarn-site.xml
