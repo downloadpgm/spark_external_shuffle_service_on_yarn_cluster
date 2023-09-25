@@ -48,11 +48,6 @@ vh1i5d3g4ipb   spk_spk_cli.1   mkenjis/ubspkcli_yarn_img:latest   node1     Runn
 
 1. access spark client node
 ```shell
-$ docker container ls   # run it in each node and check which <container ID> is running the Spark client constainer
-CONTAINER ID   IMAGE                              COMMAND                  CREATED         STATUS         PORTS                                          NAMES
-14fd74b56206   mkenjis/ubhdpclu_vol_img:latest    "/usr/bin/supervisord"   5 minutes ago   Up 5 minutes   9000/tcp                                       spk_hdpmst.1.mdep15vxvravufv6snivq0519
-d6896e6d5856   mkenjis/ubspkcli_yarn_img:latest   "/usr/bin/supervisord"   5 minutes ago   Up 5 minutes   4040/tcp, 7077/tcp, 8080-8082/tcp, 10000/tcp   spk_spk_cli.1.vh1i5d3g4ipbn7loohxc19ywe
-
 $ docker container exec -it <spk_cli ID> bash
 ```
 
@@ -130,11 +125,6 @@ $ start-yarn.sh
 
 1. access spark client node
 ```shell
-$ docker container ls   # run it in each node and check which <container ID> is running the Spark client constainer
-CONTAINER ID   IMAGE                                 COMMAND                  CREATED         STATUS         PORTS                                          NAMES
-8f0eeca49d0f   mkenjis/ubspkcli_yarn_img:latest   "/usr/bin/supervisord"   3 minutes ago   Up 3 minutes   4040/tcp, 7077/tcp, 8080-8082/tcp, 10000/tcp   yarn_spk_cli.1.npllgerwuixwnb9odb3z97tuh
-e9ceb97de97a   mkenjis/ubhdpclu_vol_img:latest           "/usr/bin/supervisord"   4 minutes ago   Up 4 minutes   9000/tcp                                       yarn_hdp1.1.58koqncyw79aaqhirapg502os
-
 $ docker container exec -it <spk_cli ID> bash
 ```
 
