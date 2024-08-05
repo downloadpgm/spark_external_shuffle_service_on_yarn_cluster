@@ -1,4 +1,4 @@
-# Spark dynamic allocation on YARN cluster in Docker
+# Spark external shuffle service on YARN cluster in Docker
 
 Apache Spark is an open-source, distributed processing system used for big data workloads.
 
